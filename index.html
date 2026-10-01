@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17324d">
+<title>Briefing Commissaire</title>
+<style>
+:root{--blue:#17324d;--blue2:#245a83;--bg:#eef3f7;--green:#1f8f55;--red:#c0392b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:#18232d}
+header{background:var(--blue);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px #0003}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}.title{font-size:21px;font-weight:800}
+.progress{height:8px;background:#ffffff40;border-radius:8px;margin-top:12px;overflow:hidden}.bar{height:100%;background:#fff;width:0}
+main{max-width:760px;margin:auto;padding:14px}
+.screen{display:none}.screen.active{display:block}
+.card{background:#fff;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 2px 10px #00000012}
+h2{margin:0 0 12px;font-size:23px}.muted{color:#63717d}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input,textarea{width:100%;border:1px solid #bdc8d1;border-radius:10px;padding:13px;font-size:17px;background:#fff}
+textarea{min-height:110px;resize:vertical}
+label.small{font-size:13px;font-weight:700;color:#5b6874;display:block;margin:4px 0}
+.section-btn{width:100%;padding:20px;margin:7px 0;text-align:left;font-size:19px;background:#fff;color:var(--blue);border:2px solid #d6e0e8}
+.section-btn span{float:right}
+.question{font-size:21px;font-weight:800;line-height:1.3;margin:6px 0 18px}
+.status{display:flex;gap:8px}.status button{flex:1}
+button{border:0;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:800;cursor:pointer}
+.primary{background:var(--blue);color:#fff}.green{background:var(--green);color:#fff}.red{background:var(--red);color:#fff}.light{background:#e8eef3;color:var(--blue)}
+.nav{display:flex;gap:8px;margin-top:12px}.nav button{flex:1}
+.badge{display:inline-block;background:#e8eef3;color:var(--blue);padding:6px 9px;border-radius:20px;font-weight:800;font-size:13px}
+.summary-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e0e6eb}
+@media(max-width:600px){main{padding:9px}.meta{grid-template-columns:1fr}.question{font-size:20px}button{min-height:48px}}
+@media print{header,.nav,.no-print{display:none!important}.screen{display:none!important}.print-screen{display:block!important}body{background:white}.card{box-shadow:none}}
+</style>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#0b1324"></head>
+<body>
+<header>
+<div class="top"><div class="title">🏟️ Briefing Commissaire</div><div id="counter">Accueil</div></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+</header>
+
+<main>
+<section id="home" class="screen active">
+<div class="card">
+<h2>Nouveau briefing</h2>
+<p class="muted">Prépare le match puis avance point par point. Les réponses restent enregistrées sur la tablette.</p>
+<div class="meta">
+<div><label class="small">Date</label><input id="date" type="date"></div>
+<div><label class="small">Heure</label><input id="heure" type="time"></div>
+</div>
+<div style="margin-top:10px"><label class="small">Match</label><input id="match" placeholder="Équipe 1 - Équipe 2"></div>
+<div style="margin-top:14px"><label class="small">Arbitre</label><input id="arbitre" placeholder="Nom de l’arbitre"></div>
+<div style="margin-top:10px"><label class="small">Assistant 1</label><input id="assistant1" placeholder="Nom de l’assistant 1"></div>
+<div style="margin-top:10px"><label class="small">Assistant 2</label><input id="assistant2" placeholder="Nom de l’assistant 2"></div>
+<div style="margin-top:10px"><label class="small">Commissaire au club</label><input id="commissaireClub" placeholder="Nom du commissaire au club"></div>
+<div style="margin-top:10px"><label class="small">Responsable sécurité</label><input id="responsableSecurite" placeholder="Nom du responsable sécurité"></div>
+</div>
+<div class="card">
+<h2>Choisir le briefing</h2>
+<div id="resume" class="card" style="display:none"></div><div id="sections"></div>
+</div>
+<div class="card no-print">
+<button class="light" style="width:100%" onclick="resetAll()">🗑️ Effacer toutes les données</button>
+</div>
+</section>
+
+<section id="questionScreen" class="screen">
+<div class="card">
+<div><span class="badge" id="sectionName"></span> <span class="badge" id="groupName"></span> <span class="badge" id="qNumber"></span></div>
+<div class="question" id="question"></div>
+<div class="status">
+<button class="green" onclick="setStatus('ok')">✓ VALIDÉ</button>
+<button class="red" onclick="setStatus('todo')">⚠ À VOIR</button>
+</div>
+<div style="margin-top:14px"><label class="small">Notes</label><textarea id="notes" placeholder="Écrire ici..."></textarea></div>
+<div class="nav">
+<button class="green" onclick="saveNow()">💾 Sauvegarder</button>
+<button class="light" onclick="prevQ()">← Précédent</button>
+<button class="primary" onclick="nextQ()">Suivant →</button>
+</div>
+</div>
+</section>
+
+<section id="summary" class="screen print-screen">
+<div class="card">
+<h2>Compte rendu du briefing</h2>
+<div id="summaryMeta"></div>
+<div id="summaryRows"></div>
+<div class="nav no-print">
+<button class="light" onclick="goHome()">← Accueil</button>
+<button class="primary" onclick="window.print()">📄 Imprimer / PDF</button>
+</div>
+</div>
+</section>
+</main>
+
+<script>
+const sections=[
+["COMMISSAIRE",[
+["AVANT MATCH","MERCI D’ETRE PRESENT","DOSSIER DU MATCH (FMI, FEUILLE DE SECOURS, CARTONS DE REMPLACEMENTS, INVITATIONS)","MAILLOTS SHORTS VESTIAIRE ARBITRE","CIVIERE","BALLONS (FILET A METTRE DANS LE VESTIAIRE ARBITRE A LEUR ARRIVEE)","PANNEAU DE REMPLACEMENT (TEST SI ELECTRONIQUE)","HEURE D’ALLUMAGE DES PROJECTEURS SI MATCH NOCTURNE","GESTION DU CHRONOMETRE","ANIMATION PARTICULIERES (C.E.FICTIF, MINUTE DE SILENCE)","RAMASSEUR DE BALLES (NOMBRE, AVEC OU SANS BALLONS, COULEURS DES EQUIPEMENTS, COUPELLES)","PHOTOCOPIE FMI, AFFICHAGE DES COMPOSITIONS"],
+["PENDANT LE MATCH","GESTION DES BALLONS AVEC L ACCORD DE L’ARBITRE RELANCE A LA MAIN","NEUTRE","PAS DE COMMENTAIRE SUR L’ARBITRAGE ET LE DEROULEMENT DU MATCH","Appel des pompiers à ma demande"],
+["MI-TEMPS / FIN DE MATCH","ACCOMPAGNEMENT DES ARBITRES A LA MI-TEMPS ET FIN DU MATCH SUIVANT LE CONTEXTE","DEBREIFING APRES MATCH"]]],
+["RESPONSABLE SÉCURITÉ",[
+["AVANT MATCH","Combien ils sont ? L’endroit où il sera ?","Gestion des tribunes en cas de problème (parcage visiteur de prévu ?)","Placement des photographes (derrière la ligne de but)"],
+["PENDANT LE MATCH","Surveiller les alentours du terrain (pas d’enfants qui jouent au ballon, personne assis sur les barrières)","Que des personnes qui sont sur la feuille de match dans les vestiaires","Gestion le tunnel avant la mi-temps et avant fin du match","Sortir le tunnel en cas de carton rouge et accompagné le joueur à son vestiaire"],
+["MI-TEMPS / FIN DE MATCH","Se placer dans le couloirs à la mi-temps et fin de match et surveiller l’entrée des Joueurs (si problème rapporter au délégué)"]]],
+["ARBITRE",[
+["AVANT MATCH","LE TERRAIN EST IL CONFORME","MATCH A ENJEU ?","BALLON A TA DEMANDE","SOINS SUR LA LIGNE OU DEHORS","NOUVEAU REGLEMNENT","GESTION DES REMPLACEMENTS AVEC L ASSISTANT 1","GESTIONS DES BANCS DE TOUCHES A MA CHARGE","VOIR CARTON BLANC LE DEROULEMENT","RENSEIGNER TEAMEN MINUTE DE SILENCE OU COUP D ENVOI","MOTS DE PASSE ?","CAPITAINES AVANT ECHAUFFEMENT ?"],
+["PENDANT LE MATCH","TEMPS ADDITIONNEL JE SERAI DEBOUT A LA 44 ET 89"],
+["MI-TEMPS / FIN DE MATCH","(VOIR LES SANCTION A LA MI-TEMPS ET FIN DE MATCH )"]]],
+["SPEAKER",[
+["AVANT MATCH","SON MODE DE FONCTIONNEMENT"],
+["PENDANT LE MATCH","TEMPS ADITIONNEL MINIMUM A LA 45 ET 90","PAS D’ANNONCE QUI NE CONCERNE PAS LE MATCH"]]]
+];
+
+function flatQuestions(section){return section[1].flatMap(g=>g.slice(1));}
+function groupFor(section,q){let n=0;for(const g of section[1]){if(q<n+g.length-1)n+=g.length-1;else if(q===n+g.length-1)return g[0];else n+=g.length-1;}return '';}
+
+let S=null,Q=0,data=JSON.parse(localStorage.getItem("briefingV5")||'{}');
+function save(){localStorage.setItem("briefingV5",JSON.stringify(data))}
+function show(id){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active")}
+function init(){
+date.value=data.date||new Date().toISOString().slice(0,10);heure.value=data.heure||"";
+match.value=data.match||"";
+arbitre.value=data.arbitre||"";assistant1.value=data.assistant1||"";
+assistant2.value=data.assistant2||"";commissaireClub.value=data.commissaireClub||"";
+responsableSecurite.value=data.responsableSecurite||"";
+sectionsDiv=document.getElementById("sections");
+const hasSaved=data.match||data.date||data.arbitre; if(hasSaved){resume.innerHTML=`<b>💾 Briefing en cours</b><br><span class="muted">${data.match||"Match non renseigné"} · ${data.date||"Date non renseignée"}</span><br><button class="primary" style="margin-top:10px" onclick="resumeLast()">Reprendre le briefing</button>`;resume.style.display="block"} sections.forEach((s,i)=>{let b=document.createElement("button");b.className="section-btn";b.innerHTML=`${s[0]} <span>→</span>`;b.onclick=()=>start(i);sectionsDiv.appendChild(b)})
+}
+function resumeLast(){S=data.lastSection??0;Q=data.lastQuestion??0;loadQ();show("questionScreen")}
+function start(i){
+data.date=date.value;data.heure=heure.value;data.match=match.value;
+data.arbitre=arbitre.value;data.assistant1=assistant1.value;data.assistant2=assistant2.value;
+data.commissaireClub=commissaireClub.value;data.responsableSecurite=responsableSecurite.value;
+save();S=i;Q=0;data.lastSection=S;data.lastQuestion=Q;save();loadQ();show("questionScreen")}
+function loadQ(){data.lastSection=S;data.lastQuestion=Q;save();
+let arr=flatQuestions(sections[S]), key=`${S}_${Q}`, d=data[key]||{};
+sectionName.textContent=sections[S][0];qNumber.textContent=`${Q+1} / ${arr.length}`; groupName.textContent=groupFor(sections[S],Q);
+question.textContent=arr[Q];notes.value=d.notes||"";
+updateBar();counter.textContent=`${Q+1}/${arr.length}`;save()
+}
+function updateBar(){let total=flatQuestions(sections[S]).length;bar.style.width=((Q+1)/total*100)+"%"}
+function setStatus(v){data[`${S}_${Q}`]={...(data[`${S}_${Q}`]||{}),status:v,notes:notes.value};save();nextQ()}
+function saveNow(){
+data.date=date.value;data.heure=heure.value;data.match=match.value;
+data.arbitre=arbitre.value;data.assistant1=assistant1.value;data.assistant2=assistant2.value;
+data.commissaireClub=commissaireClub.value;data.responsableSecurite=responsableSecurite.value;
+if(S!==null){
+data[`${S}_${Q}`]={...(data[`${S}_${Q}`]||{}),notes:notes.value};
+}
+save();
+alert("✅ Briefing sauvegardé sur la tablette.");
+}
+function nextQ(){data[`${S}_${Q}`]={...(data[`${S}_${Q}`]||{}),notes:notes.value};if(Q<flatQuestions(sections[S]).length-1){Q++;loadQ()}else{summary();}}
+function prevQ(){data[`${S}_${Q}`]={...(data[`${S}_${Q}`]||{}),notes:notes.value};if(Q>0){Q--;loadQ()}else{goHome()}}
+function summary(){
+summaryMeta.innerHTML=`
+<div class="summary-row"><b>Match</b><span>${data.match||"Non renseigné"}</span></div>
+<div class="summary-row"><b>Date / heure</b><span>${data.date||""} ${data.heure||""}</span></div>
+<div class="summary-row"><b>Arbitre</b><span>${data.arbitre||"Non renseigné"}</span></div>
+<div class="summary-row"><b>Assistant 1</b><span>${data.assistant1||"Non renseigné"}</span></div>
+<div class="summary-row"><b>Assistant 2</b><span>${data.assistant2||"Non renseigné"}</span></div>
+<div class="summary-row"><b>Commissaire au club</b><span>${data.commissaireClub||"Non renseigné"}</span></div>
+<div class="summary-row"><b>Responsable sécurité</b><span>${data.responsableSecurite||"Non renseigné"}</span></div>`;
+let h="";flatQuestions(sections[S]).forEach((q,i)=>{let d=data[`${S}_${i}`]||{};let st=d.status==="ok"?"✓ VALIDÉ":d.status==="todo"?"⚠ À VOIR":"○ Non renseigné";h+=`<div class="summary-row"><div><b>${i+1}. ${q}</b>${d.notes?`<br><span class="muted">${d.notes}</span>`:""}</div><span>${st}</span></div>`});summaryRows.innerHTML=h;counter.textContent="Terminé";bar.style.width="100%";show("summary")
+}
+function goHome(){show("home");counter.textContent="Accueil";bar.style.width="0%"}
+function resetAll(){if(confirm("Effacer toutes les réponses et recommencer ?")){localStorage.removeItem("briefingV5");location.reload()}}
+init();
+notes.addEventListener("input",()=>{if(S!==null){data[`${S}_${Q}`]={...(data[`${S}_${Q}`]||{}),notes:notes.value};data.lastSection=S;data.lastQuestion=Q;save();}});
+</script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));}</script></body></html>

@@ -1,0 +1,10 @@
+{
+  "name": "Briefing Commissaire",
+  "short_name": "Briefing",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b1324",
+  "theme_color": "#0b1324",
+  "description": "Application de briefing commissaire, sécurité, arbitre et speaker.",
+  "icons": []
+}
