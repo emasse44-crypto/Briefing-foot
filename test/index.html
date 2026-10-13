@@ -145,6 +145,8 @@ const idx=total++,key=`${S}_${idx}`,d=data[key]||{},checked=d.status==="ok";
 if(checked)done++;
 if(S===1 && idx===0){
 html+=`<div class="check-row ${checked?"done":""}"><span class="check-label">${escapeText(q)}</span><button class="ok-button" type="button" onclick="toggleCheck(${idx},true)">${checked?"✓ OK":"OK"}</button></div><input class="check-notes" type="text" aria-label="Effectif et emplacement du responsable sécurité" placeholder="Nombre d’agents et emplacement..." value="${escapeAttr(d.notes||"")}" oninput="saveNote(${idx},this.value)">`;
+}else if(S===2 && q==="MOTS DE PASSE ?"){
+html+=`<div class="check-row ${checked?"done":""}"><span class="check-label">${escapeText(q)}</span><button class="ok-button" type="button" onclick="toggleCheck(${idx},true)">${checked?"✓ OK":"OK"}</button></div><input class="check-notes" type="text" aria-label="Mots de passe" placeholder="Noter les mots de passe..." value="${escapeAttr(d.notes||"")}" oninput="saveNote(${idx},this.value)">`;
 }else{
 html+=`<div class="check-row ${checked?"done":""}"><span class="check-label">${escapeText(q)}</span><button class="ok-button" type="button" onclick="toggleCheck(${idx},true)">${checked?"✓ OK":"OK"}</button></div>`;
 }
