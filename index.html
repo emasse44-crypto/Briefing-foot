@@ -162,14 +162,9 @@ function saveNow(){
 data.date=date.value;data.heure=heure.value;data.match=match.value;
 data.arbitre=arbitre.value;data.assistant1=assistant1.value;data.assistant2=assistant2.value;
 data.commissaireClub=commissaireClub.value;data.responsableSecurite=responsableSecurite.value;
-if(S!==null){
-data[`${S}_${Q}`]={...(data[`${S}_${Q}`]||{}),notes:notes.value};
-}
 save();
 alert("✅ Briefing sauvegardé sur la tablette.");
 }
-function nextQ(){data[`${S}_${Q}`]={...(data[`${S}_${Q}`]||{}),notes:notes.value};if(Q<flatQuestions(sections[S]).length-1){Q++;loadQ()}else{summary();}}
-function prevQ(){data[`${S}_${Q}`]={...(data[`${S}_${Q}`]||{}),notes:notes.value};if(Q>0){Q--;loadQ()}else{goHome()}}
 function summary(){
 summaryMeta.innerHTML=`
 <div class="summary-row"><b>Match</b><span>${data.match||"Non renseigné"}</span></div>
@@ -184,6 +179,6 @@ let h="";flatQuestions(sections[S]).forEach((q,i)=>{let d=data[`${S}_${i}`]||{};
 function goHome(){show("home");counter.textContent="Accueil";bar.style.width="0%"}
 function resetAll(){if(confirm("Effacer toutes les réponses et recommencer ?")){localStorage.removeItem("briefingV5");location.reload()}}
 init();
-notes.addEventListener("input",()=>{if(S!==null){data[`${S}_${Q}`]={...(data[`${S}_${Q}`]||{}),notes:notes.value};data.lastSection=S;data.lastQuestion=Q;save();}});
+
 </script>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js"));}</script></body></html>
