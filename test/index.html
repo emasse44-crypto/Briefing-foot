@@ -61,8 +61,8 @@ button{border:0;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:
 <div style="margin-top:14px"><label class="small">Arbitre</label><input id="arbitre" placeholder="Nom de l’arbitre"></div>
 <div style="margin-top:10px"><label class="small">Assistant 1</label><input id="assistant1" placeholder="Nom de l’assistant 1"></div>
 <div style="margin-top:10px"><label class="small">Assistant 2</label><input id="assistant2" placeholder="Nom de l’assistant 2"></div>
-<div style="margin-top:10px"><label class="small">Speaker</label><input id="speaker" placeholder="Nom du speaker"></div>
 <div style="margin-top:10px"><label class="small">Commissaire au club</label><input id="commissaireClub" placeholder="Nom du commissaire au club"></div>
+<div style="margin-top:10px"><label class="small">Speaker</label><input id="speaker" placeholder="Nom du speaker"></div>
 <div style="margin-top:10px"><label class="small">Responsable sécurité</label><input id="responsableSecurite" placeholder="Nom du responsable sécurité"></div>
 </div>
 <div class="card">
@@ -139,7 +139,7 @@ if(S===null||!sections[S])return;
 data.lastSection=S;data.lastQuestion=0;save();
 sectionName.textContent=sections[S][0];
 const people={0:[["Commissaire au club",data.commissaireClub]],1:[["Responsable sécurité",data.responsableSecurite]],2:[["Arbitre",data.arbitre],["Assistant 1",data.assistant1],["Assistant 2",data.assistant2]],3:[["Speaker",data.speaker]]};
-const persons=(people[S]||[]).filter(x=>x[1]).map(x=>x[0]+" : "+x[1]);
+const persons=(people[S]||[]).filter(x=>x[1]).map(x=>x[1]+" : "+x[0]);
 const host=document.getElementById("checklist");
 let html="",total=0,done=0;
 if(persons.length)html+=`<div class="personnel-line">${persons.map(escapeText).join(" · ")}</div>`;
