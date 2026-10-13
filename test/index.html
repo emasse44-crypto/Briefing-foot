@@ -173,7 +173,7 @@ summaryMeta.innerHTML=`
 <div class="summary-row"><b>Assistant 2</b><span>${data.assistant2||"Non renseigné"}</span></div>
 <div class="summary-row"><b>Commissaire au club</b><span>${data.commissaireClub||"Non renseigné"}</span></div>
 <div class="summary-row"><b>Responsable sécurité</b><span>${data.responsableSecurite||"Non renseigné"}</span></div>`;
-let h="";flatQuestions(sections[S]).forEach((q,i)=>{let d=data[`${S}_${i}`]||{};let st=d.status==="ok"?"✓ TRAITÉ":"○ À TRAITER";h+=`<div class="summary-row"><div><b>${i+1}. ${q}</b>${}</div><span>${st}</span></div>`});summaryRows.innerHTML=h;counter.textContent="Terminé";bar.style.width="100%";show("summary")
+let h="";flatQuestions(sections[S]).forEach((q,i)=>{let d=data[`${S}_${i}`]||{};let st=d.status==="ok"?"✓ TRAITÉ":"○ À TRAITER";h+=`<div class="summary-row"><div><b>${i+1}. ${q}</b>${d.notes?`<br><span class="muted">${escapeText(d.notes)}</span>`:""}</div><span>${st}</span></div>`});summaryRows.innerHTML=h;counter.textContent="Terminé";bar.style.width="100%";show("summary")
 }
 function goHome(){show("home");counter.textContent="Accueil";bar.style.width="0%"}
 function resetAll(){if(confirm("Effacer toutes les réponses et recommencer ?")){localStorage.removeItem("briefingChecklistTestV1");location.reload()}}
