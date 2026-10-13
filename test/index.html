@@ -10,6 +10,7 @@
 :root{--blue:#17324d;--blue2:#245a83;--bg:#eef3f7;--green:#1f8f55;--red:#c0392b}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:#18232d}
 header{background:var(--blue);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px #0003}
+.fixed-person-name{font-size:14px;font-weight:700;line-height:1.35;margin-top:8px;padding:7px 10px;background:#ffffff1a;border-radius:8px;color:#fff}
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px}.title{font-size:21px;font-weight:800}
 .progress{height:8px;background:#ffffff40;border-radius:8px;margin-top:12px;overflow:hidden}.bar{height:100%;background:#fff;width:0}
 main{max-width:760px;margin:auto;padding:14px}
@@ -45,6 +46,7 @@ button{border:0;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:
 <body>
 <header>
 <div class="top"><div class="title">🏟️ Briefing Commissaire</div><div id="counter">Accueil</div></div>
+<div id="fixedPersonName" class="fixed-person-name" style="display:none"></div>
 <div class="progress"><div class="bar" id="bar"></div></div>
 </header>
 
@@ -62,8 +64,8 @@ button{border:0;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:
 <div style="margin-top:10px"><label class="small">Assistant 1</label><input id="assistant1" placeholder="Nom de l’assistant 1"></div>
 <div style="margin-top:10px"><label class="small">Assistant 2</label><input id="assistant2" placeholder="Nom de l’assistant 2"></div>
 <div style="margin-top:10px"><label class="small">Commissaire au club</label><input id="commissaireClub" placeholder="Nom du commissaire au club"></div>
-<div style="margin-top:10px"><label class="small">Speaker</label><input id="speaker" placeholder="Nom du speaker"></div>
 <div style="margin-top:10px"><label class="small">Responsable sécurité</label><input id="responsableSecurite" placeholder="Nom du responsable sécurité"></div>
+<div style="margin-top:10px"><label class="small">Speaker</label><input id="speaker" placeholder="Nom du speaker"></div>
 </div>
 <div class="card">
 <h2>Choisir le briefing</h2>
@@ -139,6 +141,9 @@ if(S===null||!sections[S])return;
 data.lastSection=S;data.lastQuestion=0;save();
 sectionName.textContent=sections[S][0];
 const people={0:[["Commissaire au club",data.commissaireClub]],1:[["Responsable sécurité",data.responsableSecurite]],2:[["Arbitre",data.arbitre],["Assistant 1",data.assistant1],["Assistant 2",data.assistant2]],3:[["Speaker",data.speaker]]};
+const fixed=document.getElementById("fixedPersonName");
+fixed.textContent=(people[S]||[]).map(x=>x[1]?x[1]+" : "+x[0]:"").filter(Boolean).join(" · ");
+fixed.style.display=fixed.textContent?"block":"none";
 const persons=(people[S]||[]).filter(x=>x[1]).map(x=>x[1]+" : "+x[0]);
 const host=document.getElementById("checklist");
 let html="",total=0,done=0;
@@ -189,7 +194,7 @@ summaryMeta.innerHTML=`
 <div class="summary-row"><b>Responsable sécurité</b><span>${data.responsableSecurite||"Non renseigné"}</span></div>`;
 let h="";flatQuestions(sections[S]).forEach((q,i)=>{let d=data[`${S}_${i}`]||{};let st=d.status==="ok"?"✓ TRAITÉ":"○ À TRAITER";h+=`<div class="summary-row"><div><b>${i+1}. ${q}</b>${d.notes?`<br><span class="muted">${escapeText(d.notes)}</span>`:""}</div><span>${st}</span></div>`});summaryRows.innerHTML=h;counter.textContent="Terminé";bar.style.width="100%";show("summary")
 }
-function goHome(){show("home");counter.textContent="Accueil";bar.style.width="0%"}
+function goHome(){show("home");counter.textContent="Accueil";bar.style.width="0%";document.getElementById("fixedPersonName").style.display="none"}
 function resetAll(){if(confirm("Effacer toutes les réponses et recommencer ?")){localStorage.removeItem("briefingChecklistTestV1");location.reload()}}
 init();
 
