@@ -143,7 +143,11 @@ html+=`<div class="check-group">${escapeText(group[0])}</div>`;
 group.slice(1).forEach(q=>{
 const idx=total++,key=`${S}_${idx}`,d=data[key]||{},checked=d.status==="ok";
 if(checked)done++;
+if(S===1 && idx===0){
+html+=`<div class="check-row ${checked?"done":""}"><span class="check-label">${escapeText(q)}</span><button class="ok-button" type="button" onclick="toggleCheck(${idx},true)">${checked?"✓ OK":"OK"}</button></div><input class="check-notes" type="text" aria-label="Effectif et emplacement du responsable sécurité" placeholder="Nombre d’agents et emplacement..." value="${escapeAttr(d.notes||"")}" oninput="saveNote(${idx},this.value)">`;
+}else{
 html+=`<div class="check-row ${checked?"done":""}"><span class="check-label">${escapeText(q)}</span><button class="ok-button" type="button" onclick="toggleCheck(${idx},true)">${checked?"✓ OK":"OK"}</button></div>`;
+}
 });
 });
 host.innerHTML=html;
@@ -152,6 +156,8 @@ counter.textContent=`${done}/${total}`;
 bar.style.width=(total?done/total*100:0)+"%";
 }
 function escapeText(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function escapeAttr(s){return escapeText(s).replace(/"/g,"&quot;").replace(/'/g,"&#39;")}
+function saveNote(idx,value){const key=`${S}_${idx}`;data[key]={...(data[key]||{}),notes:value};save()}
 function toggleCheck(idx,checked){
 const key=`${S}_${idx}`;
 data[key]={...(data[key]||{}),status:checked?"ok":""};
