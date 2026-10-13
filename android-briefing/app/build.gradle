@@ -1,0 +1,16 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'fr.emasse.briefingcommissaire'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'fr.emasse.briefingcommissaire'
+        minSdk 26
+        targetSdk 28
+        versionCode 1
+        versionName '1.0'
+    }
+}
