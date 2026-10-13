@@ -26,6 +26,7 @@ label.small{font-size:13px;font-weight:700;color:#5b6874;display:block;margin:4p
 .question{font-size:21px;font-weight:800;line-height:1.3;margin:6px 0 18px}
 .checklist-head{position:sticky;top:86px;background:#fff;padding:4px 0 12px;z-index:5}
 .personnel-line{background:#f3f6f8;border-radius:9px;padding:10px 12px;margin:0 0 12px;color:var(--blue);font-size:14px;font-weight:700;line-height:1.5}
+.person-under-progress{font-size:15px;font-weight:700;color:var(--blue);padding:8px 0 2px}
 .check-progress{font-weight:800;color:var(--green);margin:8px 0}
 .check-group{font-size:17px;font-weight:800;background:#eaf1f6;color:var(--blue);padding:12px;border-radius:9px;margin:16px 0 7px}
 .check-row{display:flex;align-items:flex-start;gap:12px;padding:13px 8px;border-bottom:1px solid #e3e9ee;font-size:16px;line-height:1.35}
@@ -78,7 +79,7 @@ button{border:0;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:
 
 <section id="questionScreen" class="screen">
 <div class="card">
-<div class="checklist-head"><span class="badge" id="sectionName"></span><p class="muted">Coche chaque sujet dès qu’il a été abordé.</p><div class="check-progress" id="checkProgress">0 sujet traité</div></div>
+<div class="checklist-head"><span class="badge" id="sectionName"></span><p class="muted">Coche chaque sujet dès qu’il a été abordé.</p><div class="check-progress" id="checkProgress">0 sujet traité</div><div id="personUnderProgress" class="person-under-progress" style="display:none"></div></div>
 <div id="checklist"></div>
 <div class="nav"><button class="green" onclick="saveNow()">💾 Sauvegarder</button><button class="light" onclick="goHome()">← Retour</button><button class="primary" onclick="summary()">Voir le compte rendu →</button></div>
 </div></section>
@@ -145,6 +146,8 @@ const fixed=document.getElementById("fixedPersonName");
 fixed.textContent=(people[S]||[]).map(x=>x[1]?x[1]+" : "+x[0]:"").filter(Boolean).join(" · ");
 fixed.style.display=fixed.textContent?"block":"none";
 const persons=(people[S]||[]).filter(x=>x[1]).map(x=>x[1]+" : "+x[0]);
+const personLine=document.getElementById("personUnderProgress");
+personLine.textContent=persons.join(" · ");personLine.style.display=personLine.textContent?"block":"none";
 const host=document.getElementById("checklist");
 let html="",total=0,done=0;
 if(persons.length)html+=`<div class="personnel-line">${persons.map(escapeText).join(" · ")}</div>`;
