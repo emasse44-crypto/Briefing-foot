@@ -143,7 +143,7 @@ html+=`<div class="check-group">${escapeText(group[0])}</div>`;
 group.slice(1).forEach(q=>{
 const idx=total++,key=`${S}_${idx}`,d=data[key]||{},checked=d.status==="ok";
 if(checked)done++;
-html+=`<label class="check-row ${checked?"done":""}" for="check-${S}-${idx}"><input id="check-${S}-${idx}" type="checkbox" ${checked?"checked":""} onchange="toggleCheck(${idx},this.checked)"><span class="check-label">${escapeText(q)}</span></label><textarea class="check-notes" aria-label="Notes" placeholder="Note (facultatif)" oninput="saveNote(${idx},this.value)">${escapeText(d.notes||"")}</textarea>`;
+html+=`<div class="check-row ${checked?"done":""}"><span class="check-label">${escapeText(q)}</span><button class="ok-button" type="button" onclick="toggleCheck(${idx},true)">${checked?"✓ OK":"OK"}</button></div>`;
 });
 });
 host.innerHTML=html;
@@ -154,10 +154,9 @@ bar.style.width=(total?done/total*100:0)+"%";
 function escapeText(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
 function toggleCheck(idx,checked){
 const key=`${S}_${idx}`;
-data[key]={...(data[key]||{}),status:checked?"ok":"",notes:data[key]?.notes||""};
+data[key]={...(data[key]||{}),status:checked?"ok":""};
 save();renderChecklist();
 }
-function saveNote(idx,value){const key=`${S}_${idx}`;data[key]={...(data[key]||{}),notes:value};save()}
 function saveNow(){
 data.date=date.value;data.heure=heure.value;data.match=match.value;
 data.arbitre=arbitre.value;data.assistant1=assistant1.value;data.assistant2=assistant2.value;
@@ -174,7 +173,7 @@ summaryMeta.innerHTML=`
 <div class="summary-row"><b>Assistant 2</b><span>${data.assistant2||"Non renseigné"}</span></div>
 <div class="summary-row"><b>Commissaire au club</b><span>${data.commissaireClub||"Non renseigné"}</span></div>
 <div class="summary-row"><b>Responsable sécurité</b><span>${data.responsableSecurite||"Non renseigné"}</span></div>`;
-let h="";flatQuestions(sections[S]).forEach((q,i)=>{let d=data[`${S}_${i}`]||{};let st=d.status==="ok"?"✓ TRAITÉ":"○ À TRAITER";h+=`<div class="summary-row"><div><b>${i+1}. ${q}</b>${d.notes?`<br><span class="muted">${d.notes}</span>`:""}</div><span>${st}</span></div>`});summaryRows.innerHTML=h;counter.textContent="Terminé";bar.style.width="100%";show("summary")
+let h="";flatQuestions(sections[S]).forEach((q,i)=>{let d=data[`${S}_${i}`]||{};let st=d.status==="ok"?"✓ TRAITÉ":"○ À TRAITER";h+=`<div class="summary-row"><div><b>${i+1}. ${q}</b>${}</div><span>${st}</span></div>`});summaryRows.innerHTML=h;counter.textContent="Terminé";bar.style.width="100%";show("summary")
 }
 function goHome(){show("home");counter.textContent="Accueil";bar.style.width="0%"}
 function resetAll(){if(confirm("Effacer toutes les réponses et recommencer ?")){localStorage.removeItem("briefingChecklistTestV1");location.reload()}}
