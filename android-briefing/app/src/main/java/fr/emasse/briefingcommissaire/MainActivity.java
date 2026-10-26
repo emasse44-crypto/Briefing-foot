@@ -7,9 +7,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.webkit.WebResourceRequest;
-import android.content.Intent;
-import android.net.Uri;
 
 public class MainActivity extends Activity {
     private WebView webView;
@@ -25,6 +22,8 @@ public class MainActivity extends Activity {
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
+        settings.setAllowFileAccess(true);
+        settings.setAllowContentAccess(true);
         settings.setLoadWithOverviewMode(true);
         settings.setUseWideViewPort(true);
         settings.setSupportZoom(true);
@@ -33,22 +32,9 @@ public class MainActivity extends Activity {
         settings.setJavaScriptCanOpenWindowsAutomatically(false);
 
         webView.setWebChromeClient(new WebChromeClient());
-        webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Uri uri = request.getUrl();
-                if ("https".equals(uri.getScheme()) &&
-                    "emasse44-crypto.github.io".equals(uri.getHost())) {
-                    return false;
-                }
-                if ("https".equals(uri.getScheme())) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                    return true;
-                }
-                return true;
-            }
-        });
-        webView.loadUrl("https://emasse44-crypto.github.io/Briefing-foot/?v=9");
+        webView.setWebViewClient(new WebViewClient());
+        // The official briefing is bundled inside the APK: no network is needed.
+        webView.loadUrl("file:///android_asset/index.html");
     }
 
     @Override
