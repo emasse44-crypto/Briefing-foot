@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -45,7 +45,18 @@ jobs:
           cd release
           zip Briefing-Commissaire-Android8-V1.zip Briefing-Commissaire-Android8-V1.apk
 
-      - name: Upload APK and ZIP
+      - name: Publish permanent download release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: briefing-android8-v1
+          name: Briefing Commissaire Android 8 V1
+          body: "Version Android 8, conçue pour fonctionner hors connexion avec les données enregistrées sur l'appareil."
+          files: |
+            release/Briefing-Commissaire-Android8-V1.apk
+            release/Briefing-Commissaire-Android8-V1.zip
+          fail_on_unmatched_files: true
+
+      - name: Upload APK and ZIP as workflow artifact
         uses: actions/upload-artifact@v4
         with:
           name: Briefing-Commissaire-Android8-V1
